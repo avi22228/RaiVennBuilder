@@ -16,19 +16,19 @@
     <div style="float:left;padding:20px">
         <table>
             <tr>
-                <td>Cisco View(1)</td>
+                <td>Cisco View Only(1)</td>
                 <td>
                     <input class="input-mini venn_area" id="1" name="1" type="number" value="5838" >
                 </td>
             </tr>
             <tr>
-                <td>Network View(2)</td>
+                <td>Network View Only(2)</td>
                 <td>
                     <input class="input-mini venn_area" id="2" name="2"  type="number" value="285">
                 </td>
             </tr>
             <tr>
-                <td>Customer View(3)</td>
+                <td>Customer View Only(3)</td>
                 <td>
                     <input class="input-mini venn_area" id="3" name="3" type="number" value="2115">
                 </td>
@@ -57,6 +57,15 @@
                     <input class="input-mini venn_area" id="1,2,3" name="1.2.3" type="number" value="1854">
                 </td>
             </tr>
+            <br/>
+            <tr>
+                <td>Opacity(0.1 - 1)</td>
+                <td>
+                    <input class="input-mini" id="opacity" type="number" step="0.1" value="0.4" >
+                </td>
+            </tr>
+            
+
         </table>
     </div>
     <div id="venn"></div>
@@ -129,12 +138,15 @@
     div.datum(getSetIntersections()).call(chart);
 
     // redraw the sets on any change in input
-    d3.selectAll("input").on("change", function () {
+    d3.selectAll("input").on("change", function ()
+    {
         d3.select("#venn").datum(getSetIntersections()).call(chart);
+        d3.selectAll("#venn .venn-circle path").style("fill-opacity", parseFloat(document.getElementById("opacity").value));
     });
 
-    d3.selectAll("#venn .venn-circle path")
-    .style("fill-opacity", .8);
+    d3.selectAll("#venn .venn-circle path").style("fill-opacity", parseFloat(document.getElementById("opacity").value));
+
+    d3.selectAll("#venn .venn-circle text").style("fill", "rgb(68, 68, 68)");
 
 
     var tooltip = d3.select("body").append("div")
@@ -143,7 +155,7 @@
     div.selectAll("path")
         .style("stroke-opacity", 0)
         .style("stroke", "#fff")
-        .style("stroke-width", 0)
+        .style("stroke-width", 0);
 
     div.selectAll("g")
         .on("mouseover", function (d, i) {
@@ -152,6 +164,7 @@
 
             // Display a tooltip with the current size
             tooltip.transition().duration(400).style("opacity", .9);
+
             tooltip.text(d.size + " assets");
 
             // highlight the current path
@@ -159,7 +172,7 @@
             selection.select("path")
                 .style("stroke-width", 3)
                 .style("fill-opacity", d.sets.length == 1 ? .4 : .1)
-                .style("stroke-opacity", 1);
+               .style("stroke-opacity", 1);
         })
 
         .on("mousemove", function () {
@@ -168,7 +181,7 @@
         })
 
         .on("mouseout", function (d, i) {
-            tooltip.transition().duration(400).style("opacity", 0);
+            //tooltip.transition().duration(400).style("opacity", 0);
             var selection = d3.select(this).transition("tooltip").duration(400);
             selection.select("path")
                 .style("stroke-width", 0)
