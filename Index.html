@@ -68,8 +68,13 @@
 
         </table>
     </div>
-    <div id="venn"></div>
+    <br/>
+    <br/>
     <div style="clear: both;"></div>
+    <div id="venn" align="center"></div>
+
+    <!--<button id="save">Save as Image</button>
+    <div id="svgdataurl"></div>-->
 
 </body>
 
@@ -92,7 +97,8 @@
 <script src="/scripts/venn.js"></script>
 
 
-<script>
+ <script>
+
 
     function getSetIntersections() {
         areas = d3.selectAll(".venn_area")[0].map(
@@ -109,6 +115,7 @@
 
 
     function parseValue(elementValue, setId) {
+
         var oneTwoValue = parseInt(document.getElementById("1,2").value);
         var oneThreeValue = parseInt(document.getElementById("1,3").value);
         var twoThreeValue = parseInt(document.getElementById("2,3").value);
@@ -131,8 +138,8 @@
     }
 
     var chart = venn.VennDiagram()
-                     .width(500)
-                     .height(500);
+                     .width(750)
+                     .height(750);
 
     var div = d3.select("#venn");
     div.datum(getSetIntersections()).call(chart);
@@ -156,37 +163,77 @@
         .style("stroke-opacity", 0)
         .style("stroke", "#fff")
         .style("stroke-width", 0);
-
     div.selectAll("g")
-        .on("mouseover", function (d, i) {
-            // sort all the areas relative to the current item
-            venn.sortAreas(div, d);
+            .on("mouseover", function (d, i) {
+                // sort all the areas relative to the current item
+                venn.sortAreas(div, d);
 
-            // Display a tooltip with the current size
-            tooltip.transition().duration(400).style("opacity", .9);
+                // Display a tooltip with the current size
+                tooltip.transition().duration(400).style("opacity", .9);
+                tooltip.text(d.size + " assets");
 
-            tooltip.text(d.size + " assets");
+                // highlight the current path
+                var selection = d3.select(this).transition("tooltip").duration(400);
+                selection.select("path")
+                    .style("stroke-width", 3)
+                    .style("fill-opacity", d.sets.length == 1 ? .4 : .1)
+                    .style("stroke-opacity", 1);
+            })
 
-            // highlight the current path
-            var selection = d3.select(this).transition("tooltip").duration(400);
-            selection.select("path")
-                .style("stroke-width", 3)
-                .style("fill-opacity", d.sets.length == 1 ? .4 : .1)
-               .style("stroke-opacity", 1);
-        })
+            .on("mousemove", function () {
+                tooltip.style("left", (d3.event.pageX) + "px")
+                       .style("top", (d3.event.pageY - 28) + "px");
+            })
 
-        .on("mousemove", function () {
-            tooltip.style("left", (d3.event.pageX) + "px")
-                   .style("top", (d3.event.pageY - 28) + "px");
-        })
+            .on("mouseout", function (d, i) {
+                tooltip.transition().duration(400).style("opacity", 0);
+                var selection = d3.select(this).transition("tooltip").duration(400);
+                selection.select("path")
+                    .style("stroke-width", 0)
+                    .style("fill-opacity", d.sets.length == 1 ? .25 : .0)
+                    .style("stroke-opacity", 0);
+            });
 
-        .on("mouseout", function (d, i) {
-            //tooltip.transition().duration(400).style("opacity", 0);
-            var selection = d3.select(this).transition("tooltip").duration(400);
-            selection.select("path")
-                .style("stroke-width", 0)
-                .style("fill-opacity", d.sets.length == 1 ? .25 : .0)
-                .style("stroke-opacity", 0);
-        });
+
+ 
+
+
+    //d3.select("#save").on("click", function () {
+    //    var html = d3.select("svg")
+    //          .attr("version", 1.1)
+    //          .attr("xmlns", "http://www.w3.org/2000/svg")
+    //          .node().parentNode.innerHTML;
+
+    //    console.log(html);
+    //    var imgsrc = 'data:image/svg+xml;base64,' + btoa(html);
+    //    var img = '<img src="' + imgsrc + '">';
+    //    d3.select("#svgdataurl").html(img);
+
+
+    //    var canvas = document.querySelector("canvas"),
+    //        context = canvas.getContext("2d");
+
+    //    var image = new Image;
+    //    image.src = imgsrc;
+    //    image.onload = function () {
+    //        context.drawImage(image, 0, 0);
+
+    //           var canvasdata = canvas.toDataURL("image/png");
+
+
+    //        //var canvasdata = renderer.domElement.toDataURL("image/png");
+
+    //        var pngimg = '<img src="' + canvasdata + '">';
+    //        d3.select("#pngdataurl").html(pngimg);
+
+    //        var a = document.createElement("a");
+    //        a.download = "sample.png";
+    //        a.href = canvasdata;
+    //        a.click();
+    //    };
+
+    //});
+
+
 </script>
 </html>
